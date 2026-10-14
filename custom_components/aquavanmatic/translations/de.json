@@ -1,0 +1,23 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "AquaVanMatic hinzufügen",
+        "description": "Diese Anlage wurde über MQTT gefunden. Bitte auswählen und bestätigen.",
+        "data": {
+          "device": "Anlage"
+        }
+      },
+      "confirm": {
+        "title": "AquaVanMatic gefunden",
+        "description": "Möchtest du **{name}** zu Home Assistant hinzufügen?"
+      }
+    },
+    "abort": {
+      "no_devices_found": "Keine AquaVanMatic-Anlage gefunden. Bitte prüfen, ob die Anlage eingeschaltet ist und in ihren Einstellungen der MQTT-Broker (IP, Benutzer, Passwort) eingetragen ist. Danach erneut versuchen.",
+      "already_configured": "Alle gefundenen AquaVanMatic-Anlagen sind bereits eingerichtet.",
+      "invalid_device": "Dies ist keine AquaVanMatic-Anlage."
+    },
+    "flow_title": "{name}"
+  }
+}

@@ -1,0 +1,94 @@
+blueprint:
+  name: AquaVanMatic – Bedienerentscheidung aufs Handy
+  description: >-
+    Schickt eine Mitteilung mit den Aktionen „Trotzdem weiter“ und „Abbrechen“
+    aufs Handy, sobald die AquaVanMatic-Anlage auf eine Entscheidung wartet.
+    Wird an der Anlage oder im Dashboard entschieden, verschwindet die Mitteilung.
+  domain: automation
+  source_url: https://github.com/aquavanmatic/AquaVanMatic-HA/blob/main/blueprints/automation/aquavanmatic/decision_notify.yaml
+  input:
+    continue_button:
+      name: Button „Trotzdem weiter“
+      selector:
+        entity:
+          filter:
+            - integration: aquavanmatic
+              domain: button
+    abort_button:
+      name: Button „Abbrechen“
+      selector:
+        entity:
+          filter:
+            - integration: aquavanmatic
+              domain: button
+    notify_device:
+      name: Handy (Home Assistant App)
+      selector:
+        device:
+          filter:
+            - integration: mobile_app
+
+mode: restart
+
+triggers:
+  - trigger: state
+    entity_id: !input continue_button
+    from: "unavailable"
+
+variables:
+  continue_button: !input continue_button
+  abort_button: !input abort_button
+  tag: "{{ 'aquavanmatic_' ~ continue_button }}"
+  action_continue: "{{ 'AVM_CONTINUE_' ~ context.id }}"
+  action_abort: "{{ 'AVM_ABORT_' ~ context.id }}"
+
+conditions:
+  - condition: template
+    value_template: "{{ states(continue_button) != 'unavailable' }}"
+
+actions:
+  - domain: mobile_app
+    type: notify
+    device_id: !input notify_device
+    title: "AquaVanMatic: Entscheidung erforderlich"
+    message: "{{ state_attr(continue_button, 'question') or 'Die Anlage wartet auf eine Entscheidung.' }}"
+    data:
+      tag: "{{ tag }}"
+      actions:
+        - action: "{{ action_continue }}"
+          title: Trotzdem weiter
+        - action: "{{ action_abort }}"
+          title: Abbrechen
+
+  - wait_for_trigger:
+      - trigger: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: "{{ action_continue }}"
+      - trigger: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: "{{ action_abort }}"
+      - trigger: state
+        entity_id: !input continue_button
+        to: "unavailable"
+    timeout: "12:00:00"
+
+  - choose:
+      - conditions: "{{ wait.trigger is not none and wait.trigger.event is defined and wait.trigger.event.data.action == action_continue }}"
+        sequence:
+          - action: button.press
+            target:
+              entity_id: "{{ continue_button }}"
+      - conditions: "{{ wait.trigger is not none and wait.trigger.event is defined and wait.trigger.event.data.action == action_abort }}"
+        sequence:
+          - action: button.press
+            target:
+              entity_id: "{{ abort_button }}"
+
+  - domain: mobile_app
+    type: notify
+    device_id: !input notify_device
+    message: clear_notification
+    data:
+      tag: "{{ tag }}"

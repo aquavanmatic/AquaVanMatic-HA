@@ -1,0 +1,23 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add AquaVanMatic",
+        "description": "This unit was found via MQTT. Please select and confirm.",
+        "data": {
+          "device": "Unit"
+        }
+      },
+      "confirm": {
+        "title": "AquaVanMatic found",
+        "description": "Do you want to add **{name}** to Home Assistant?"
+      }
+    },
+    "abort": {
+      "no_devices_found": "No AquaVanMatic unit found. Make sure the unit is switched on and the MQTT broker (IP, user, password) is set in its settings, then try again.",
+      "already_configured": "All AquaVanMatic units found are already set up.",
+      "invalid_device": "This is not an AquaVanMatic unit."
+    },
+    "flow_title": "{name}"
+  }
+}

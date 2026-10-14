@@ -1,0 +1,78 @@
+blueprint:
+  name: AquaVanMatic – Offene Meldungen aufs Handy
+  description: >-
+    Schickt eine Mitteilung mit der Aktion „Quittieren“ aufs Handy, sobald die
+    AquaVanMatic-Anlage quittierungspflichtige Meldungen hat. Quittiert werden
+    genau die Meldungen, die in der Mitteilung stehen. Wird an der Anlage oder im
+    Dashboard quittiert, verschwindet die Mitteilung.
+  domain: automation
+  source_url: https://github.com/aquavanmatic/AquaVanMatic-HA/blob/main/blueprints/automation/aquavanmatic/messages_notify.yaml
+  input:
+    ack_button:
+      name: Button „Meldungen quittieren“
+      selector:
+        entity:
+          filter:
+            - integration: aquavanmatic
+              domain: button
+    notify_device:
+      name: Handy (Home Assistant App)
+      selector:
+        device:
+          filter:
+            - integration: mobile_app
+
+mode: restart
+
+triggers:
+  - trigger: state
+    entity_id: !input ack_button
+    from: "unavailable"
+
+variables:
+  ack_button: !input ack_button
+  tag: "{{ 'aquavanmatic_msg_' ~ ack_button }}"
+  action_ack: "{{ 'AVM_ACK_' ~ context.id }}"
+
+conditions:
+  - condition: template
+    value_template: "{{ states(ack_button) != 'unavailable' }}"
+
+actions:
+  - domain: mobile_app
+    type: notify
+    device_id: !input notify_device
+    title: "AquaVanMatic: {{ state_attr(ack_button, 'open_messages') }} offene Meldung(en)"
+    message: >-
+      {% for m in state_attr(ack_button, 'messages') or [] %}{{ m.code }} · {{ m.text }}
+      {% endfor %}
+    data:
+      tag: "{{ tag }}"
+      actions:
+        - action: "{{ action_ack }}"
+          title: Quittieren
+
+  - wait_for_trigger:
+      - trigger: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: "{{ action_ack }}"
+      - trigger: state
+        entity_id: !input ack_button
+        to: "unavailable"
+    timeout: "12:00:00"
+
+  - if:
+      - condition: template
+        value_template: "{{ wait.trigger is not none and wait.trigger.event is defined }}"
+    then:
+      - action: button.press
+        target:
+          entity_id: "{{ ack_button }}"
+
+  - domain: mobile_app
+    type: notify
+    device_id: !input notify_device
+    message: clear_notification
+    data:
+      tag: "{{ tag }}"

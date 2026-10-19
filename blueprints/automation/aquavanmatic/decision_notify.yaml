@@ -30,17 +30,19 @@ blueprint:
 
 mode: restart
 
+# Löst bei jeder neuen Entscheidung aus (Attribut "code" ändert sich),
+# auch wenn die Automatisierung erst angelegt wird, während schon etwas offen ist.
 triggers:
   - trigger: state
     entity_id: !input continue_button
-    from: "unavailable"
+    attribute: code
 
 variables:
   continue_button: !input continue_button
   abort_button: !input abort_button
   tag: "{{ 'aquavanmatic_' ~ continue_button }}"
-  action_continue: "{{ 'AVM_CONTINUE_' ~ context.id }}"
-  action_abort: "{{ 'AVM_ABORT_' ~ context.id }}"
+  action_continue: "{{ 'AVM_CONTINUE_' ~ (as_timestamp(now()) * 1000) | int }}"
+  action_abort: "{{ 'AVM_ABORT_' ~ (as_timestamp(now()) * 1000) | int }}"
 
 conditions:
   - condition: template

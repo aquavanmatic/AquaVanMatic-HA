@@ -12,7 +12,11 @@ _LOGGER = logging.getLogger(__name__)
 def find_devices(hass):
     """Yield (identifier, url) for every MQTT device with an aquamatic_ identifier."""
     registry = dr.async_get(hass)
-    for device in registry.devices.values():
+    # Neuere HA-Versionen liefern beim Iterieren die Geräte selbst, ältere nur die IDs.
+    for item in registry.devices:
+        device = registry.async_get(item) if isinstance(item, str) else item
+        if device is None:
+            continue
         ids = [value for domain, value in device.identifiers
                if domain == "mqtt" and value.startswith(PREFIX)]
         if not ids:

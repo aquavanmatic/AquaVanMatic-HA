@@ -1,6 +1,6 @@
 DOMAIN = "aquavanmatic"
 PREFIX = "aquamatic_"
-VERSION = "1.5.0"  # identisch mit manifest.json halten (Cache-Busting für das Dashboard-JS)
+VERSION = "1.5.1"  # identisch mit manifest.json halten (Cache-Busting für das Dashboard-JS)
 
 STRATEGY_URL = "/aquavanmatic_static/aquavanmatic-strategy.js"
 STATUS_TOPIC = "aquamatic/state/status"

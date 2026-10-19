@@ -24,15 +24,16 @@ blueprint:
 
 mode: restart
 
+# Löst bei jeder Änderung der Meldungsliste aus (neue oder quittierte Meldung).
 triggers:
   - trigger: state
     entity_id: !input ack_button
-    from: "unavailable"
+    attribute: messages
 
 variables:
   ack_button: !input ack_button
   tag: "{{ 'aquavanmatic_msg_' ~ ack_button }}"
-  action_ack: "{{ 'AVM_ACK_' ~ context.id }}"
+  action_ack: "{{ 'AVM_ACK_' ~ (as_timestamp(now()) * 1000) | int }}"
 
 conditions:
   - condition: template

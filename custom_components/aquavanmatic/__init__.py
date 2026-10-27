@@ -1,43 +1,33 @@
 """AquaVanMatic: REST buttons for MQTT-discovered devices plus a ready-made dashboard."""
 import logging
-from pathlib import Path
 
-from homeassistant.components.frontend import add_extra_js_url
-from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import SOURCE_IMPORT
 from homeassistant.const import EVENT_HOMEASSISTANT_STARTED, Platform
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr
 
-from .const import DOMAIN, PREFIX, STRATEGY_URL, VERSION
+from .const import DOMAIN, PREFIX
 from .decision import DecisionState
 from .discovery import find_devices
+from .frontend_resource import (
+    async_ensure_resource,
+    async_register_static,
+    async_remove_resource,
+)
 
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS = [Platform.BUTTON, Platform.SELECT]
 
 
-async def _async_register_frontend(hass):
-    """Serve the dashboard strategy and load it in every browser session."""
-    if hass.data.get(f"{DOMAIN}_frontend"):
-        return
-    path = Path(__file__).parent / "frontend" / "aquavanmatic-strategy.js"
-    await hass.http.async_register_static_paths(
-        [StaticPathConfig(STRATEGY_URL, str(path), False)]
-    )
-    url = f"{STRATEGY_URL}?v={VERSION}"
-    add_extra_js_url(hass, url)             # moderne Oberfläche (Browser)
-    add_extra_js_url(hass, url, es5=True)   # Kompatibilitäts-Oberfläche (ältere App-Webviews)
-    hass.data[f"{DOMAIN}_frontend"] = True
-
-
 async def async_setup(hass, config):
     """Runs once the integration is loaded (UI entry or legacy YAML).
 
-    Registers the dashboard strategy and watches the device registry so that
+    Serves the dashboard strategy, keeps it registered as Lovelace resource
+    and watches the device registry so that
     further AquaVanMatic devices are added automatically.
     """
-    await _async_register_frontend(hass)
+    await async_register_static(hass)
+    await async_ensure_resource(hass)
     in_progress = set()
 
     @callback
@@ -86,3 +76,9 @@ async def async_unload_entry(hass, entry):
     if unloaded:
         hass.data.get(DOMAIN, {}).pop(entry.entry_id, None)
     return unloaded
+
+
+async def async_remove_entry(hass, entry):
+    """Last AquaVanMatic entry deleted -> remove the Lovelace resource too."""
+    if not [e for e in hass.config_entries.async_entries(DOMAIN) if e.entry_id != entry.entry_id]:
+        await async_remove_resource(hass)

@@ -6,14 +6,15 @@
   "dependencies": [
     "frontend",
     "http",
+    "lovelace",
     "mqtt"
   ],
-  "documentation": "https://github.com/aquavanmatic/AquaVanMatic-HA",
+  "documentation": "https://aquavanmatic.de",
   "integration_type": "device",
   "iot_class": "local_push",
-  "issue_tracker": "https://github.com/aquavanmatic/AquaVanMatic-HA/issues",
+  "issue_tracker": "https://aquavanmatic.de",
   "mqtt": [
     "homeassistant/sensor/+/stateText/config"
   ],
-  "version": "1.5.1"
+  "version": "1.6.1"
 }

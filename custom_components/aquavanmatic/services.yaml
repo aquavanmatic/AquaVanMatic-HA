@@ -1,0 +1,18 @@
+report_leakage:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          filter:
+            - integration: aquavanmatic
+    sensor:
+      required: true
+      default: "1"
+      selector:
+        select:
+          translation_key: leakage_sensor
+          options:
+            - "1"
+            - "2"
+            - "3"

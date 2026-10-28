@@ -1,0 +1,53 @@
+blueprint:
+  name: AquaVanMatic – Externer Leckagesensor
+  description: >-
+    Meldet der AquaVanMatic-Anlage eine Leckage, sobald einer der gewählten
+    Wassersensoren (z. B. Aqara/Zigbee) Wasser erkennt. Wirkt wie der eigene
+    Leckage-Eingang der Anlage: Der laufende Vorgang wird abgebrochen, die
+    Meldung bleibt stehen, bis sie quittiert wird.
+  domain: automation
+  source_url: https://github.com/aquavanmatic/AquaVanMatic-HA/blob/main/blueprints/automation/aquavanmatic/leakage_sensor.yaml
+  input:
+    leak_sensors:
+      name: Wassersensor(en)
+      description: Ein oder mehrere Sensoren, die bei Wasser „nass“ (an) melden.
+      selector:
+        entity:
+          multiple: true
+          filter:
+            - domain: binary_sensor
+              device_class: moisture
+    unit:
+      name: AquaVanMatic-Anlage
+      selector:
+        device:
+          filter:
+            - integration: aquavanmatic
+    sensor:
+      name: Leckage-Eingang der Anlage
+      description: Als welche Leckage die Anlage die Meldung behandelt.
+      default: "1"
+      selector:
+        select:
+          options:
+            - label: "Leckage 1 – Pumpe (9402)"
+              value: "1"
+            - label: "Leckage 2 – Filter (9401)"
+              value: "2"
+            - label: "Leckage 3 – Reserve (9403)"
+              value: "3"
+
+# Nur beim Wechsel auf "nass" melden – nicht bei Neustart oder Wiederverbindung.
+mode: single
+
+triggers:
+  - trigger: state
+    entity_id: !input leak_sensors
+    from: "off"
+    to: "on"
+
+actions:
+  - action: aquavanmatic.report_leakage
+    data:
+      device_id: !input unit
+      sensor: !input sensor

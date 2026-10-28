@@ -19,5 +19,30 @@
       "invalid_device": "This is not an AquaVanMatic unit."
     },
     "flow_title": "{name}"
+  },
+  "services": {
+    "report_leakage": {
+      "name": "Report leakage",
+      "description": "Reports an external leakage to an AquaVanMatic unit. Works like the unit's own leakage input: the running process is aborted and the message stays until it is acknowledged.",
+      "fields": {
+        "device_id": {
+          "name": "Unit",
+          "description": "The AquaVanMatic unit."
+        },
+        "sensor": {
+          "name": "Leakage input",
+          "description": "Which leakage input is triggered."
+        }
+      }
+    }
+  },
+  "selector": {
+    "leakage_sensor": {
+      "options": {
+        "1": "Leakage 1 – pump (9402)",
+        "2": "Leakage 2 – filter (9401)",
+        "3": "Leakage 3 – reserve (9403)"
+      }
+    }
   }
 }

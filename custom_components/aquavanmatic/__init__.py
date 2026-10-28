@@ -9,6 +9,7 @@ from homeassistant.helpers import device_registry as dr
 from .const import DOMAIN, PREFIX
 from .decision import DecisionState
 from .discovery import find_devices
+from .services import async_register_services
 from .frontend_resource import (
     async_ensure_resource,
     async_register_static,
@@ -28,6 +29,7 @@ async def async_setup(hass, config):
     """
     await async_register_static(hass)
     await async_ensure_resource(hass)
+    await async_register_services(hass)
     in_progress = set()
 
     @callback

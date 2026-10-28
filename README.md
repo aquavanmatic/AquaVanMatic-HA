@@ -25,6 +25,8 @@ Nach dem Speichern erscheint die Anlage nach wenigen Sekunden unter **Einstellun
 
 Messwerte wie Leitfähigkeit, Durchfluss, Produktion und Wartung werden nur übertragen, wenn dort zusätzlich der Haken **MQTT** für die Prozesswerte gesetzt ist. Ohne den Haken sehen Sie nur Betriebszustand, Meldungen und Pumpe.
 
+> **Hinweis zu den blauen Buttons:** Sie öffnen die passende Seite direkt in Ihrem Home Assistant. Beim ersten Klick fragt my.home-assistant.io nach der Adresse Ihres Home Assistant (z. B. `http://homeassistant.local:8123` oder `http://192.168.1.50:8123`). Erscheint „Verbindung fehlgeschlagen“, ist dort eine falsche Adresse hinterlegt: auf https://my.home-assistant.io die Adresse ändern, mit der Sie Home Assistant sonst im Browser öffnen.
+
 ## 2. Integration installieren
 
 [![In HACS öffnen](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=aquavanmatic&repository=AquaVanMatic-HA&category=integration)

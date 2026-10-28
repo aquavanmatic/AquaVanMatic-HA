@@ -22,6 +22,7 @@ REASONS = {
     "invalid_mode": "Ungültige Auswahl.",
     "invalid_process": "Ungültiger Vorgang.",
     "invalid_target": "Ungültiges Ablaufziel.",
+    "invalid_sensor": "Ungültige Leckage-Nummer (erlaubt: 1, 2 oder 3).",
 }
 
 

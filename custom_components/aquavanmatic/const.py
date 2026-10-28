@@ -1,6 +1,6 @@
 DOMAIN = "aquavanmatic"
 PREFIX = "aquamatic_"
-VERSION = "1.6.1"  # identisch mit manifest.json halten (Cache-Busting für das Dashboard-JS)
+VERSION = "1.7.0"  # identisch mit manifest.json halten (Cache-Busting für das Dashboard-JS)
 
 STRATEGY_URL = "/aquavanmatic_static/aquavanmatic-strategy.js"
 STATUS_TOPIC = "aquamatic/state/status"
@@ -54,3 +54,10 @@ SELECTS = [
         "path": "/api/waterpath/drain", "data": lambda v: {"process": "disinfection", "target": v},
     },
 ]
+
+# Externe Leckage: POST /api/leakage, sensor=1|2|3 (wirkt wie lokaler Leckage-Eingang)
+LEAKAGE_SENSORS = {
+    1: "Leckage 1 – Pumpe (Meldung 9402)",
+    2: "Leckage 2 – Filter (Meldung 9401)",
+    3: "Leckage 3 – Reserve (Meldung 9403)",
+}

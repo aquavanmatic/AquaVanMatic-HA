@@ -19,5 +19,30 @@
       "invalid_device": "Dies ist keine AquaVanMatic-Anlage."
     },
     "flow_title": "{name}"
+  },
+  "services": {
+    "report_leakage": {
+      "name": "Leckage melden",
+      "description": "Meldet eine externe Leckage an eine AquaVanMatic-Anlage. Wirkt wie der eigene Leckage-Eingang der Anlage: Der laufende Vorgang wird abgebrochen, die Meldung bleibt bis zur Quittierung stehen.",
+      "fields": {
+        "device_id": {
+          "name": "Anlage",
+          "description": "Die AquaVanMatic-Anlage."
+        },
+        "sensor": {
+          "name": "Leckage-Eingang",
+          "description": "Welcher Leckage-Eingang ausgelöst wird."
+        }
+      }
+    }
+  },
+  "selector": {
+    "leakage_sensor": {
+      "options": {
+        "1": "Leckage 1 – Pumpe (9402)",
+        "2": "Leckage 2 – Filter (9401)",
+        "3": "Leckage 3 – Reserve (9403)"
+      }
+    }
   }
 }
